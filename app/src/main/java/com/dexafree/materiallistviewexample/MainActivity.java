@@ -18,11 +18,13 @@ import com.dexafree.materialList.model.Card;
 import com.dexafree.materialList.model.CardItemView;
 import com.dexafree.materialList.view.MaterialListView;
 
+import DB.DBHelper;
+
 
 public class MainActivity extends Activity {
     private Context mContext;
     private MaterialListView mListView;
-
+    private DBHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +35,10 @@ public class MainActivity extends Activity {
 
         // Bind the MaterialListView to a variable
         mListView = (MaterialListView) findViewById(R.id.material_listview);
-
         // Fill the array with mock content
         fillArray();
 
+        dbHelper =new DBHelper(this);
         // Set the dismiss listener
         mListView.setOnDismissCallback(new OnDismissCallback() {
             @Override
@@ -112,6 +114,7 @@ public class MainActivity extends Activity {
         card.setDismissible(true);
 
         mListView.addAtStart(card);
+
     }
 
 
