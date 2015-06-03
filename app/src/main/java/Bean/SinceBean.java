@@ -1,18 +1,33 @@
 package Bean;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * Created by SHLSY on 2015/6/1.
  */
-public class SinceBean {
-    private  String content;
-    private  int days_num;
+public class SinceBean implements Serializable {
+    private String content;
+    private int days_num;
+    private String img_url;
+    private int is_forever;
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
 
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
-        content = content;
+        this.content = content;
     }
 
     public int getDays_num() {
@@ -32,9 +47,6 @@ public class SinceBean {
     }
 
 
-
-    private  String img_url;
-
     public int getIs_forever() {
         return is_forever;
     }
@@ -43,6 +55,5 @@ public class SinceBean {
         this.is_forever = is_forever;
     }
 
-    int  is_forever;
 
 }

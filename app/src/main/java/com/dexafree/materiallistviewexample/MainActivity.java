@@ -20,37 +20,34 @@ import com.dexafree.materialList.model.CardItemView;
 import com.dexafree.materialList.view.MaterialListView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+
+import Bean.SinceBean;
 import DB.DBHelper;
 import Presenter.Presenter;
+import Utils.CalendarUtils;
 import ViewInterface.SinceInterface;
 
 
 public class MainActivity extends Activity implements SinceInterface,View.OnClickListener{
-    public static final String TAG =MainActivity.class.getSimpleName();
+
     private Context mContext;
     private MaterialListView mListView;
     private DBHelper dbHelper;
     private Presenter presenter;
     FloatingActionButton AddButton,ShareButton;
+    static final int AddRequestCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayShowHomeEnabled(false);
-        // Save a reference to the context
-        mContext = this;
-        presenter=new Presenter(this);
-        // Bind the MaterialListView to a variable
-        mListView = (MaterialListView) findViewById(R.id.material_listview);
-        AddButton = (FloatingActionButton) findViewById(R.id.action_a);
-        AddButton.setTitle("加条紫虫");
-        AddButton.setOnClickListener(this);
-        ShareButton= (FloatingActionButton) findViewById(R.id.action_b);
-        ShareButton.setOnClickListener(this);
-        ShareButton.setTitle("分享");
-        // Fill the array with mock content
-        fillArray();
-        dbHelper =new DBHelper(this);
+        InitView();
+        SetListeners();
+
+    }
+
+    private void SetListeners() {
         // Set the dismiss listener
         mListView.setOnDismissCallback(new OnDismissCallback() {
             @Override
@@ -60,7 +57,7 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
                 String tag = card.getTag().toString();
 
                 // Show a toast
-                Toast.makeText(mContext, "You have dismissed a "+tag, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "You have dismissed a " + tag, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -76,7 +73,22 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
                 Log.d("LONG_CLICK", view.getTag().toString());
             }
         });
+    }
 
+    private void InitView() {
+        mContext = this;
+        presenter=new Presenter(this);
+        dbHelper =new DBHelper(this);
+        // Bind the MaterialListView to a variable
+        mListView = (MaterialListView) findViewById(R.id.material_listview);
+        AddButton = (FloatingActionButton) findViewById(R.id.action_a);
+        AddButton.setTitle("加条紫虫");
+        AddButton.setOnClickListener(this);
+        ShareButton= (FloatingActionButton) findViewById(R.id.action_b);
+        ShareButton.setOnClickListener(this);
+        ShareButton.setTitle("分享");
+        // Fill the array with mock content
+        fillArray();
     }
 
     private void fillArray() {
@@ -152,7 +164,7 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
     @Override
     public void Add() {
         Intent i =new Intent(this,AddActivity.class);
-        startActivity(i);
+        startActivityForResult(i,AddRequestCode);
     }
 
     @Override
@@ -162,6 +174,25 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     @Override
     public void Modify() {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case AddRequestCode:if(resultCode==RESULT_OK) {
+                SinceBean since = (SinceBean) data.getSerializableExtra("Since");
+                BasicImageButtonsCard card = new BasicImageButtonsCard(this);
+                card.setDrawable(R.drawable.ic_launcher);
+                card.setTitle("紫虫 "+since.getContent());
+                card.setDescription(CalendarUtils.get_between_days(new Date(),since.getDate())+"   天了");
+                card.setLeftButtonText("编辑");
+                card.setRightButtonText("删除");
+                card.setTag(since.getImg_url());
+                card.setDismissible(true);
+                mListView.addAtStart(card);
+            } break;
+        }
 
     }
 

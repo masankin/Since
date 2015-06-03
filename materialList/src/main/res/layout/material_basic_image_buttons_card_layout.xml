@@ -20,7 +20,7 @@
                 android:layout_height="match_parent"
                 android:minWidth="100dp"
                 android:contentDescription="@null"
-                android:scaleType="fitStart"
+                android:scaleType="fitCenter"
                 android:id="@+id/imageView" />
 
             <LinearLayout

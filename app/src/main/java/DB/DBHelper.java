@@ -11,7 +11,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String name = "since.db";
     private static final int Current_Version = 1;
     private static final String CREATE_SINCE = "create table Since (" + "id integer primary key autoincrement, "
-            + "content text, " + "days_num integer, " + "img_url text, " + "is_forever integer)";
+            + "content text, " + "days_num integer, " + "img_url text, "+"year integer, "+"month integer, "+"day integer, " + "is_forever integer)";
 
     public DBHelper(Context context) {
         super(context, name, null, Current_Version);
