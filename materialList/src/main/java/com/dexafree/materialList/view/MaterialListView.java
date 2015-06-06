@@ -116,6 +116,7 @@ public class MaterialListView extends RecyclerView {
 	public void remove(Card card) {
 		if (card.isDismissible()) {
 			BusProvider.dismiss(card);
+
 		}
 	}
 

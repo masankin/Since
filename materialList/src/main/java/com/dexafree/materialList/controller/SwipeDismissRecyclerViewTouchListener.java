@@ -421,7 +421,7 @@ public class SwipeDismissRecyclerViewTouchListener implements View.OnTouchListen
 			}
 		});
 
-		mPendingDismisses.add(new PendingDismissData(dismissPosition, dismissView));
+//		mPendingDismisses.add(new PendingDismissData(dismissPosition, dismissView));
 		animator.start();
 	}
 }

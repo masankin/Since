@@ -19,7 +19,10 @@ public class SinceDAO {
         values.put("content",SB.getContent());
         values.put("days_num",SB.getDays_num());
         values.put("is_forever",SB.getIs_forever());
-        DB.insert("Since",null,values);
+        values.put("year",String.valueOf(SB.getDate().getYear() + 1900));
+        values.put("month",String.valueOf(SB.getDate().getMonth()+1));
+        values.put("day",String.valueOf(SB.getDate().getDate()));
+//        DB.insert("Since",null,values);
     }
 
     public static ArrayList<SinceBean> QueryAll (SQLiteDatabase DB){

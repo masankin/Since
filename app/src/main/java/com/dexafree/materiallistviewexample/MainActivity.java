@@ -3,16 +3,15 @@ package com.dexafree.materiallistviewexample;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.dexafree.materialList.cards.BasicImageButtonsCard;
-import com.dexafree.materialList.cards.OnButtonPressListener;
-import com.dexafree.materialList.cards.SimpleCard;
+import com.dexafree.materialList.cards.BigImageCard;
 import com.dexafree.materialList.controller.OnDismissCallback;
 import com.dexafree.materialList.controller.RecyclerItemClickListener;
 import com.dexafree.materialList.model.Card;
@@ -25,6 +24,7 @@ import java.util.Date;
 import Bean.SinceBean;
 import DB.DBHelper;
 import Presenter.Presenter;
+import Utils.BitmapUtils;
 import Utils.CalendarUtils;
 import ViewInterface.SinceInterface;
 
@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
     private Context mContext;
     private MaterialListView mListView;
     private DBHelper dbHelper;
+    private SQLiteDatabase DB;
     private Presenter presenter;
     FloatingActionButton AddButton,ShareButton;
     static final int AddRequestCode = 1;
@@ -53,11 +54,6 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
             @Override
             public void onDismiss(Card card, int position) {
 
-                // Recover the tag linked to the Card
-                String tag = card.getTag().toString();
-
-                // Show a toast
-                Toast.makeText(mContext, "You have dismissed a " + tag, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -65,12 +61,12 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
         mListView.addOnItemTouchListener(new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(CardItemView view, int position) {
-                Log.d("CARD_TYPE", view.getTag().toString());
+
             }
 
             @Override
             public void onItemLongClick(CardItemView view, int position) {
-                Log.d("LONG_CLICK", view.getTag().toString());
+
             }
         });
     }
@@ -93,32 +89,10 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     private void fillArray() {
         for (int i = 0; i < 4; i++) {
-            BasicImageButtonsCard card = new BasicImageButtonsCard(this);
-            card.setDescription("描述"+i);
-            card.setTitle("标题" + i);
-            card.setDrawable(R.drawable.dog);
-            card.setTag("BASIC_IMAGE_BUTTON_CARD");
-            card.setLeftButtonText("LEFT");
-            card.setRightButtonText("RIGHT");
-
-            if (i % 2 == 0)
-                card.setDividerVisible(true);
-
-            card.setOnLeftButtonPressedListener(new OnButtonPressListener() {
-                @Override
-                public void onButtonPressedListener(View view, Card card) {
-                    Toast.makeText(mContext, "You have pressed the left button", Toast.LENGTH_SHORT).show();
-                    ((SimpleCard) card).setTitle("CHANGED ON RUNTIME");
-                }
-            });
-
-            card.setOnRightButtonPressedListener(new OnButtonPressListener() {
-                @Override
-                public void onButtonPressedListener(View view, Card card) {
-                    Toast.makeText(mContext, "You have pressed the right button on card " + ((SimpleCard) card).getTitle(), Toast.LENGTH_SHORT).show();
-                    mListView.remove(card);
-                }
-            });
+            BigImageCard card = new BigImageCard(this);
+            card.setTitle("Your title");
+            card.setDescription("Your description");
+            card.setDrawable(R.drawable.photo);
             card.setDismissible(true);
             mListView.add(card);
         }
@@ -177,20 +151,23 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case AddRequestCode:if(resultCode==RESULT_OK) {
                 SinceBean since = (SinceBean) data.getSerializableExtra("Since");
                 BasicImageButtonsCard card = new BasicImageButtonsCard(this);
-                card.setDrawable(R.drawable.ic_launcher);
-                card.setTitle("紫虫 "+since.getContent());
-                card.setDescription(CalendarUtils.get_between_days(new Date(),since.getDate())+"   天了");
+                card.setDrawable(new BitmapDrawable(BitmapUtils.getBitmapFromPath(since.getImg_url(),300,500)));
+                card.setTitle(since.getContent()+" has passed ");
+                card.setDescription(CalendarUtils.get_between_days(new Date(),since.getDate())+"days");
                 card.setLeftButtonText("编辑");
                 card.setRightButtonText("删除");
                 card.setTag(since.getImg_url());
-                card.setDismissible(true);
+                card.setDismissible(since.getIs_forever()==1?true:false);
                 mListView.addAtStart(card);
+                DB=dbHelper.getWritableDatabase();
+                presenter.Add_ResultHandle(since,DB);
             } break;
         }
 

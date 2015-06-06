@@ -35,13 +35,26 @@
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
             android:id="@+id/ContentEdit"
-            android:hint="Description"
-            android:text="EditText in Material Design"
+            android:hint="这条Past的描述"
+            android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="20"
             app:met_primaryColor="?colorAccent" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ImgEdit"
+            android:hint="选择图片"
+            android:text="图片地址"
+            app:met_singleLineEllipsis="true"
+            android:textCursorDrawable="@drawable/text_cursor_cyan"
+            app:met_baseColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+            app:met_primaryColor="?colorAccent" />
+
 
     </LinearLayout>
 
@@ -57,7 +70,7 @@
             android:id="@+id/switchView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?colorPrimary"
+            android:background="#1E88E5"
             materialdesign:check="true" />
 
     </LinearLayout>
@@ -66,20 +79,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/forever"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <com.gc.materialdesign.views.ButtonFlat
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?colorPrimary"
+            android:background="#3f51b5"
             android:text="确定" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <com.gc.materialdesign.views.ButtonFlat
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?colorPrimary"
+            android:background="#3f51b5"
             android:text="取消" />
     </LinearLayout>
 
