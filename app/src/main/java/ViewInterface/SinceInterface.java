@@ -10,6 +10,6 @@ import Bean.SinceBean;
 public interface SinceInterface {
     public void Add();
     public void Share();
-    public void Modify();
+    public void Modify(SinceBean sinceBean);
     public void Display(ArrayList<SinceBean> list);
 }

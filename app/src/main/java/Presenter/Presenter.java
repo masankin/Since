@@ -35,7 +35,9 @@ public class Presenter {
     public void Add_ResultHandle(SinceBean sinceBean, SQLiteDatabase DB) {
         sinceModel.InsertSince(sinceBean, DB);
     }
-
+    public void Modify_ResultHandle(SinceBean sinceBean,SQLiteDatabase DB,String OldContent){
+        SinceDAO.Update(DB,sinceBean,OldContent);
+    }
     public void delete_since(SinceBean sinceBean, SQLiteDatabase DB) {
         SinceDAO.delete(DB,sinceBean);
     }
@@ -48,7 +50,7 @@ public class Presenter {
         sinceInterface.Share();
     }
 
-    public void Modify(){sinceInterface.Modify();}
+    public void Modify(SinceBean sinceBean){sinceInterface.Modify(sinceBean);}
 
 
 }

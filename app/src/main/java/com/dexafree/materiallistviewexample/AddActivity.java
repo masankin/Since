@@ -58,23 +58,53 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
         SureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String content = ContentEdit.getText().toString();
-                if (content.equals("") == false) {
-                    SinceBean since = new SinceBean();
-                    since.setContent(ContentEdit.getText().toString());
-                    since.setDays_num(0);
-                    since.setIs_forever(Is_Forever());
-                    try {
-                        since.setDate(CalendarUtils.format.parse(DateEdit.getText().toString()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                int days = 0;
+
+                try {
+                    days = CalendarUtils.get_between_days(new Date(), CalendarUtils.format.parse(DateEdit.getText().toString()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (days >= 0) {
+                    String content = ContentEdit.getText().toString();
+                    if (content.length() > 15) {
+                        final Dialog dialog = new Dialog(AddActivity.this, "Past", "描述过长");
+                        dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    } else {
+                        if (content.equals("") == false) {
+                            SinceBean since = new SinceBean();
+                            since.setContent(ContentEdit.getText().toString());
+                            since.setDays_num(0);
+                            since.setIs_forever(Is_Forever());
+                            try {
+                                since.setDate(CalendarUtils.format.parse(DateEdit.getText().toString()));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Intent i = new Intent();
+                            i.putExtra("Since", since);
+                            setResult(RESULT_OK, i);
+                            finish();
+                        } else {
+                            final Dialog dialog = new Dialog(AddActivity.this, "Past", "请输入描述");
+                            dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+
+                        }
                     }
-                    Intent i = new Intent();
-                    i.putExtra("Since", since);
-                    setResult(RESULT_OK, i);
-                    finish();
-                } else {
-                    final Dialog dialog = new Dialog(AddActivity.this, "Past", "请输入描述");
+                }else {
+                    final Dialog dialog = new Dialog(AddActivity.this, "Past", "请选择今天之前的日期");
                     dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -82,7 +112,6 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
                         }
                     });
                     dialog.show();
-
                 }
             }
         });

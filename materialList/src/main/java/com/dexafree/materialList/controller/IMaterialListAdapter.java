@@ -5,19 +5,21 @@ import com.dexafree.materialList.model.Card;
 import java.util.Collection;
 
 public interface IMaterialListAdapter {
-	void add(Card card);
+    void add(Card card);
 
-	void addAtStart(Card card);
+    void addAtStart(Card card);
 
-	void addAll(Card... cards);
+    void addAtPosition(int Position, Card card);
 
-	void addAll(Collection<Card> cards);
+    void addAll(Card... cards);
 
-	void remove(Card card, boolean withAnimation);
+    void addAll(Collection<Card> cards);
 
-	boolean isEmpty();
+    void remove(Card card, boolean withAnimation);
 
-	Card getCard(int position);
+    boolean isEmpty();
 
-	int getPosition(Card card);
+    Card getCard(int position);
+
+    int getPosition(Card card);
 }

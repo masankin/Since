@@ -3,7 +3,6 @@ package DAO;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -44,7 +43,6 @@ public class SinceDAO {
 
     public static void delete(SQLiteDatabase DB, SinceBean SB) {
         DB.delete("Since", "content = ?", new String[]{SB.getContent()});
-        Log.v("sqk","删除成功");
     }
 
     public static void Update(SQLiteDatabase DB, SinceBean SB, String OldContent) {

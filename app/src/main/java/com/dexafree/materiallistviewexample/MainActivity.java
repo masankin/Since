@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.dexafree.materialList.model.Card;
 import com.dexafree.materialList.model.CardItemView;
 import com.dexafree.materialList.view.MaterialListView;
 import com.gc.materialdesign.widgets.Dialog;
+import com.gc.materialdesign.widgets.SnackBar;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -29,15 +31,23 @@ import Utils.CalendarUtils;
 import ViewInterface.SinceInterface;
 
 
-public class MainActivity extends Activity implements SinceInterface,View.OnClickListener{
+public class MainActivity extends Activity implements SinceInterface, View.OnClickListener {
     ArrayList<SinceBean> list;
     private MaterialListView mListView;
     private DBHelper dbHelper;
     private SQLiteDatabase DB;
     private Presenter presenter;
-    FloatingActionButton AddButton,ShareButton;
+    FloatingActionButton AddButton, ShareButton;
+    private BasicButtonsCard ModifiedCard;
     static final int AddRequestCode = 1;
-    static final int ModifyRequestCode=2;
+    static final int ModifyRequestCode = 2;
+    private static boolean DBCanRemove = true;
+    Handler handler =new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +63,36 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
         mListView.setOnDismissCallback(new OnDismissCallback() {
             @Override
             public void onDismiss(Card card, int position) {
-                Log.v("sqk","删除了"+position);
-                presenter.delete_since(list.get(list.size()-position-1),DB);
+                final int index = position;
+                final  BasicButtonsCard ComeBackcard = (BasicButtonsCard) card;
+                final SnackBar snackbar = new SnackBar(MainActivity.this, "撤销删除操作？", "YES", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        DBCanRemove =false;
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                               DBCanRemove =true;
+                            }
+                        },4000);
+                        //撤销并重新加入List的操作
+                        mListView.addAtPosition(index, ComeBackcard);
+                    }
+                });
+                snackbar.setOnhideListener(new SnackBar.OnHideListener() {
+                    @Override
+                    public void onHide() {
+                        if (DBCanRemove) {
+                            presenter.delete_since(list.get(list.size() - index - 1), DB);
+                        }
+
+                    }
+                });
+                snackbar.show();
+
+
             }
         });
 
@@ -62,26 +100,28 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
         mListView.addOnItemTouchListener(new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(CardItemView view, int position) {
-              presenter.Modify();
-            }
+                ModifiedCard= (BasicButtonsCard) view.getCard();
+                presenter.Modify((SinceBean)view.getTag());
 
+
+            }
             @Override
             public void onItemLongClick(CardItemView view, int position) {
-              //Doing Nothing
+                //Doing Nothing
             }
         });
     }
 
     private void InitView() {
-        presenter=new Presenter(this);
-        dbHelper =new DBHelper(this);
-        DB=dbHelper.getWritableDatabase();
+        presenter = new Presenter(this);
+        dbHelper = new DBHelper(this);
+        DB = dbHelper.getWritableDatabase();
         // Bind the MaterialListView to a variable
         mListView = (MaterialListView) findViewById(R.id.material_listview);
         AddButton = (FloatingActionButton) findViewById(R.id.action_a);
         AddButton.setTitle("添加Past");
         AddButton.setOnClickListener(this);
-        ShareButton= (FloatingActionButton) findViewById(R.id.action_b);
+        ShareButton = (FloatingActionButton) findViewById(R.id.action_b);
         ShareButton.setOnClickListener(this);
         ShareButton.setTitle("分享");
         // Fill the array with mock content
@@ -89,11 +129,9 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
     }
 
     private void fillArray() {
-       presenter.getALLSince(DB);
+        presenter.getALLSince(DB);
 
     }
-
-
 
 
     @Override
@@ -104,15 +142,15 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_clear:
-                final Dialog dialog=new Dialog(this,"Past","将清除所有非永恒的Past，是否继续？");
+                final Dialog dialog = new Dialog(this, "Past", "将清除所有非永恒的Past，是否继续？");
                 dialog.addCancelButton("CANCEL");
                 dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mListView.clearDismiss();
-                        Toast.makeText(MainActivity.this,"done",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "done", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });
@@ -131,8 +169,15 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     @Override
     public void Add() {
-        Intent i =new Intent(this,AddActivity.class);
-        startActivityForResult(i,AddRequestCode);
+        Intent i = new Intent(this, AddActivity.class);
+        startActivityForResult(i, AddRequestCode);
+    }
+
+    @Override
+    public void Modify(SinceBean sinceBean) {
+        Intent i = new Intent(this, ModifyActivity.class);
+        i.putExtra("Since",sinceBean);
+        startActivityForResult(i, ModifyRequestCode);
     }
 
     @Override
@@ -144,28 +189,25 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
                 getString(R.string.app_name));
         share.putExtra(
                 Intent.EXTRA_TEXT,
-                getString(R.string.app_description)+"---"
-                        + "\n"+"Past，一款充满回忆的APP"+"\n"
+                getString(R.string.app_description) + "---"
+                        + "\n" + "Past，一款充满回忆的APP" + "\n"
                         + "个人博客：sqk.pub");
         startActivity(Intent.createChooser(share,
                 getString(R.string.app_name)));
 
     }
 
-    @Override
-    public void Modify() {
-        Intent i =new Intent(this,ModifyActivity.class);
-        startActivityForResult(i,ModifyRequestCode);
-    }
+
+
 
     @Override
     public void Display(ArrayList<SinceBean> list) {
-        this.list=list;
-        if(list.size()==0){
-            Toast.makeText(this,"您在这的回忆空空如也~",Toast.LENGTH_SHORT).show();
-        }else{
-            for(int i=0;i<list.size();i++){
-                SinceBean since=list.get(i);
+        this.list = list;
+        if (list.size() == 0) {
+            Toast.makeText(this, "您在这的回忆空空如也~", Toast.LENGTH_SHORT).show();
+        } else {
+            for (int i = 0; i < list.size(); i++) {
+                SinceBean since = list.get(i);
                 GenerateCards(since);
             }
         }
@@ -173,10 +215,11 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     private void GenerateCards(SinceBean since) {
         BasicButtonsCard card = new BasicButtonsCard(this);
-        card.setTitle(CalendarUtils.get_between_days(new Date(), since.getDate()) + "   DAYS!");
-        card.setDescription("The  "+since.getContent() + " has passed ");
+        card.setTitle(CalendarUtils.get_between_days(new Date(), since.getDate()) + "     DAYS!");
+        card.setDescription("The  " + since.getContent() + "  has passed ");
         card.setLeftButtonText("");
         card.setRightButtonText("");
+        card.setTag(since);
         SetDisMissibleAndDivide(card, since);
         mListView.addAtStart(card);
     }
@@ -184,34 +227,52 @@ public class MainActivity extends Activity implements SinceInterface,View.OnClic
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case AddRequestCode:if(resultCode==RESULT_OK) {
-                SinceBean since = (SinceBean) data.getSerializableExtra("Since");
-                GenerateCards(since);
-                presenter.Add_ResultHandle(since,DB);
-            } break;
+        switch (requestCode) {
+            case AddRequestCode:
+                if (resultCode == RESULT_OK) {
+                    SinceBean since = (SinceBean) data.getSerializableExtra("Since");
+                    GenerateCards(since);
+                    presenter.Add_ResultHandle(since, DB);
+                }
+                break;
+            case ModifyRequestCode:
+                if (resultCode == RESULT_OK) {
+                    SinceBean since = (SinceBean) data.getSerializableExtra("Since");
+                    ModifiedCard.setTitle(CalendarUtils.get_between_days(new Date(), since.getDate()) + "     DAYS!");
+                    ModifiedCard.setDescription("The  " + since.getContent() + "  has passed ");
+                    ModifiedCard.setTag(since);
+                    presenter.Modify_ResultHandle(since, DB,data.getStringExtra("OldContent"));
+                }
+                break;
         }
 
     }
-    private void SetDisMissibleAndDivide(BasicButtonsCard card,SinceBean since){
 
-            card.setDismissible(PastIsDismissible(since));
-            card.setDividerVisible(PastIsDismissible(since));
+    private void SetDisMissibleAndDivide(BasicButtonsCard card, SinceBean since) {
+
+        card.setDismissible(PastIsDismissible(since));
+        card.setDividerVisible(!PastIsDismissible(since));
 
     }
-    private boolean PastIsDismissible(SinceBean since){
+
+    private boolean PastIsDismissible(SinceBean since) {
         //为永恒，不能删除
-        if(since.getIs_forever()==1){
+        if (since.getIs_forever() == 1) {
             return false;
         }
         //默认为可以删除
         return true;
     }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.action_a:  presenter.Start_Add();   break;
-            case R.id.action_b:  presenter.Share();  break;
+        switch (v.getId()) {
+            case R.id.action_a:
+                presenter.Start_Add();
+                break;
+            case R.id.action_b:
+                presenter.Share();
+                break;
         }
     }
 }

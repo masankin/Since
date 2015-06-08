@@ -60,14 +60,14 @@
         android:background="?colorPrimary">
 
         <com.gc.materialdesign.views.ButtonFlat
-            android:id="@+id/button"
+            android:id="@+id/Modify_button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#ffffff"
             android:text="确定" />
 
         <com.gc.materialdesign.views.ButtonFlat
-            android:id="@+id/button2"
+            android:id="@+id/Modify_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#ffffff"
@@ -75,6 +75,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ResetSinceTime"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"

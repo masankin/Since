@@ -29,7 +29,7 @@ public class MaterialListView extends RecyclerView {
 
 	private static final int DEFAULT_COLUMNS_PORTRAIT = 1;
 	private static final int DEFAULT_COLUMNS_LANDSCAPE = 2;
-	
+	MaterialListAdapter adapter;
 	private OnDismissCallback mDismissCallback;
 	private SwipeDismissRecyclerViewTouchListener mDismissListener;
 	private View emptyView;
@@ -127,6 +127,10 @@ public class MaterialListView extends RecyclerView {
 	public void addAtStart(Card card){
 		((IMaterialListAdapter)getAdapter()).addAtStart(card);
 	}
+
+    public void addAtPosition(int Position,Card card){
+        ((IMaterialListAdapter)getAdapter()).addAtPosition(Position,card);
+    }
 
     public void addAll(Card... cards) {
 		((IMaterialListAdapter) getAdapter()).addAll(cards);

@@ -28,6 +28,7 @@ public abstract class CardItemView<T extends Card> extends LinearLayout {
         this.card = card;
     }
 
+    public Card getCard() {return card;}
     public Object getTag(){
         return card.getTag();
     }
