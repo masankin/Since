@@ -9,8 +9,7 @@ import java.util.Date;
 public class SinceBean implements Serializable {
     private String content;
     private int days_num;
-    private String img_url;
-    private int is_forever;
+    private int is_forever; //1=forever ，0=Nforever
     private Date date;
 
     public Date getDate() {
@@ -37,15 +36,6 @@ public class SinceBean implements Serializable {
     public void setDays_num(int days_num) {
         this.days_num = days_num;
     }
-
-    public String getImg_url() {
-        return img_url;
-    }
-
-    public void setImg_url(String img_url) {
-        this.img_url = img_url;
-    }
-
 
     public int getIs_forever() {
         return is_forever;

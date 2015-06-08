@@ -3,7 +3,8 @@
     package="com.dexafree.materiallistviewexample" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -21,6 +22,11 @@
         <activity
             android:name=".AddActivity"
             android:label="添加" >
+        </activity>
+        <activity
+            android:name=".ModifyActivity"
+            android:label="@string/title_activity_modify"
+            android:parentActivityName=".MainActivity">
         </activity>
     </application>
 

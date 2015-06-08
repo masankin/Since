@@ -48,36 +48,6 @@
 
 
     <LinearLayout
-        android:id="@+id/forever"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingLeft="72dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:background="?colorPrimary">>
-
-        <com.gc.materialdesign.views.Switch
-            android:id="@+id/switchView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#009688"
-            android:layout_gravity="left"
-            materialdesign:check="false" />
-        <TextView
-            android:textColor="#ffffff"
-
-            android:text="是否永恒，永恒将不能删除"
-            android:singleLine="true"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/forever"
@@ -87,7 +57,7 @@
         android:paddingLeft="72dp"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:background="#ffffff">
+        android:background="?colorPrimary">
 
         <com.gc.materialdesign.views.ButtonFlat
             android:id="@+id/button"
@@ -104,6 +74,18 @@
             android:text="取消" />
     </LinearLayout>
 
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#009688">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:textSize="25sp"
+            android:text="重置Past时间"/>
+        </LinearLayout>
 </LinearLayout>
 

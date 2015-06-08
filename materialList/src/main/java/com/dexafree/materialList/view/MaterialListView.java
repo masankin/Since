@@ -6,9 +6,9 @@ import android.content.res.TypedArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.View;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import com.dexafree.materialList.R;
 import com.dexafree.materialList.controller.IMaterialListAdapter;
@@ -139,7 +139,9 @@ public class MaterialListView extends RecyclerView {
     public void clear(){
         ((MaterialListAdapter)getAdapter()).clear();
     }
-
+    public void clearDismiss(){
+        ((MaterialListAdapter)getAdapter()).clearDismiss();
+    }
 	@Override
 	public void setAdapter(final Adapter adapter) {
 		final Adapter oldAdapter = getAdapter();
@@ -168,6 +170,7 @@ public class MaterialListView extends RecyclerView {
     @Subscribe
     public void onCardDismiss(DismissEvent event) {
 		int position = ((IMaterialListAdapter) getAdapter()).getPosition(event.getDismissedCard());
+
 		ViewHolder holder = findViewHolderForPosition(position);
 		mDismissListener.dismissCard(holder.itemView, position);
     }

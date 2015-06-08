@@ -1,5 +1,6 @@
 package Utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,5 +28,14 @@ public class CalendarUtils {
         today.setTime(Before_Date*1000);
         return format.format(today);
     }
-
+    //根据日期生成date
+    public static Date  getDateByCalendar(String year,String month,String day){
+        Date date =null;
+        try {
+            date=format.parse(new StringBuffer().append(year).append("-").append(month).append("-").append(day).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 }

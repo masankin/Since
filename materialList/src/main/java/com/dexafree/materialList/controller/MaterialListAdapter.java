@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import com.dexafree.materialList.events.BusProvider;
 import com.dexafree.materialList.model.Card;
 import com.dexafree.materialList.model.CardItemView;
-import com.dexafree.materialList.view.MaterialListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapter.ViewHolder> implements IMaterialListAdapter {
@@ -83,6 +83,16 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
 			}
 		}
 	}
+
+    public void clearDismiss(){
+        Iterator<Card> it =mCardList.listIterator();
+        while (it.hasNext()){
+            if (it.next().isDismissible()){
+                it.remove();
+            }
+        }
+        notifyDataSetChanged();
+    }
 
     public void clear(){
         mCardList.clear();

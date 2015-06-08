@@ -1,43 +1,37 @@
 package com.dexafree.materiallistviewexample;
 
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.gc.materialdesign.views.ButtonFlat;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.Switch;
 import com.gc.materialdesign.widgets.Dialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
 import Bean.SinceBean;
 import Utils.CalendarUtils;
-import Utils.UriUtils;
 
 
 public class AddActivity extends FragmentActivity implements DatePickerDialog.OnDateSetListener {
     final Calendar calendar = Calendar.getInstance();
-    final static int SELECT_PICTURE=1;
     public static final String DATEPICKER_TAG = "datepicker";
-    ButtonRectangle DatePicker;
-    MaterialEditText DateEdit, ContentEdit, ImgEdit;
+    MaterialEditText DateEdit, ContentEdit;
     ButtonFlat SureButton, CencelButton;
-    ContentResolver mContentResolver;
-    private String ImgPath;
-    private static boolean hasChooseImg=false;
+    private Switch mswitch;
     final DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create);
         getActionBar().setDisplayShowHomeEnabled(false);
-        mContentResolver = getContentResolver();
         InitViews();
         SetListeners();
     }
@@ -46,21 +40,12 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
         ContentEdit = (MaterialEditText) findViewById(R.id.ContentEdit);
         DateEdit = (MaterialEditText) findViewById(R.id.DateEdit);
         DateEdit.setText(CalendarUtils.format.format(new Date()));
-        ImgEdit = (MaterialEditText) findViewById(R.id.ImgEdit);
         SureButton = (ButtonFlat) findViewById(R.id.button);
         CencelButton = (ButtonFlat) findViewById(R.id.button2);
+        mswitch= (Switch) findViewById(R.id.switchView);
     }
 
     private void SetListeners() {
-        ImgEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-
-                intent.setType("image/*");
-                startActivityForResult(intent, SELECT_PICTURE);
-            }
-        });
         DateEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,30 +58,32 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
         SureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(hasChooseImg){
-                SinceBean since = new SinceBean();
-                since.setContent(ContentEdit.getText().toString());
-                since.setDays_num(0);
-                since.setIs_forever(0);
-                since.setImg_url(ImgPath);
-                since.setDate(new Date());
-                Intent i = new Intent();
-                i.putExtra("Since", since);
-                setResult(RESULT_OK, i);
-                finish();}else{
-                   String Content =ContentEdit.getText().toString();
-                   String message=Content.equals("") ? "请输入描述!" :"请选择图片!";
-                   final Dialog dialog=new Dialog(AddActivity.this,"Past",message);
+                String content = ContentEdit.getText().toString();
+                if (content.equals("") == false) {
+                    SinceBean since = new SinceBean();
+                    since.setContent(ContentEdit.getText().toString());
+                    since.setDays_num(0);
+                    since.setIs_forever(Is_Forever());
+                    try {
+                        since.setDate(CalendarUtils.format.parse(DateEdit.getText().toString()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Intent i = new Intent();
+                    i.putExtra("Since", since);
+                    setResult(RESULT_OK, i);
+                    finish();
+                } else {
+                    final Dialog dialog = new Dialog(AddActivity.this, "Past", "请输入描述");
+                    dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
 
-                   dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
-                       @Override
-                       public void onClick(View v) {
-                           dialog.dismiss();
-                       }
-                   });
-                   dialog.show();
-
-               }
+                }
             }
         });
         CencelButton.setOnClickListener(new View.OnClickListener() {
@@ -107,17 +94,12 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            ImgPath=UriUtils.getImageAbsolutePath(this, uri);
-            ImgEdit.setText(ImgPath);
-            hasChooseImg=true;
+    private int Is_Forever(){
+        if(mswitch.isCheck()){
+            return 1;
         }
+        return 0;
     }
-
-
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int i, int i2, int i3) {
         DateEdit.setText(new StringBuffer().append(i).append("-").append(i2 + 1).append("-").append(i3).toString());
