@@ -191,7 +191,7 @@ public class MainActivity extends Activity implements SinceInterface, View.OnCli
                 Intent.EXTRA_TEXT,
                 getString(R.string.app_description) + "---"
                         + "\n" + "Past，一款充满回忆的APP" + "\n"
-                        + "个人博客：sqk.pub");
+                        );
         startActivity(Intent.createChooser(share,
                 getString(R.string.app_name)));
 

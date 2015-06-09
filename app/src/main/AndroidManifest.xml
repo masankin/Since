@@ -22,6 +22,7 @@
         <activity
             android:name=".AddActivity"
             android:label="添加" >
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".ModifyActivity"

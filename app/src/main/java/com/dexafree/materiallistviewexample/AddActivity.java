@@ -3,6 +3,9 @@ package com.dexafree.materiallistviewexample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -32,6 +35,7 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create);
         getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         InitViews();
         SetListeners();
     }
@@ -132,5 +136,21 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int i, int i2, int i3) {
         DateEdit.setText(new StringBuffer().append(i).append("-").append(i2 + 1).append("-").append(i3).toString());
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_since, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
