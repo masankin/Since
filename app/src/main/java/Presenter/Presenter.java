@@ -2,7 +2,10 @@ package Presenter;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dexafree.materialList.model.Card;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import Bean.SinceBean;
 import DAO.SinceDAO;
@@ -40,6 +43,10 @@ public class Presenter {
     }
     public void delete_since(SinceBean sinceBean, SQLiteDatabase DB) {
         SinceDAO.delete(DB,sinceBean);
+    }
+
+    public void delete_allCards(List<Card> list,SQLiteDatabase DB){
+        sinceModel.DeleteAllCards(DB,list);
     }
 
     public void Start_Add() {

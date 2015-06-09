@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.dexafree.materialList.cards.BasicButtonsCard;
+import com.dexafree.materialList.controller.MaterialListAdapter;
 import com.dexafree.materialList.controller.OnDismissCallback;
 import com.dexafree.materialList.controller.RecyclerItemClickListener;
 import com.dexafree.materialList.model.Card;
@@ -20,9 +21,11 @@ import com.dexafree.materialList.view.MaterialListView;
 import com.gc.materialdesign.widgets.Dialog;
 import com.gc.materialdesign.widgets.SnackBar;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import Bean.SinceBean;
 import DB.DBHelper;
@@ -149,7 +152,13 @@ public class MainActivity extends Activity implements SinceInterface, View.OnCli
                 dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mListView.clearDismiss();
+                        mListView.clearDismiss(new MaterialListAdapter.ClearCallback() {
+                            @Override
+                            public void onClearDismiss(List<Card> list) {
+                                //新启一个线程去删除所有非永恒的Card
+                              presenter.delete_allCards(list,DB);
+                            }
+                        });
                         Toast.makeText(MainActivity.this, "done", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
@@ -274,5 +283,16 @@ public class MainActivity extends Activity implements SinceInterface, View.OnCli
                 presenter.Share();
                 break;
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

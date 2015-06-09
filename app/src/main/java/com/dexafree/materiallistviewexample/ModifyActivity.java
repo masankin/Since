@@ -10,6 +10,7 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.widgets.Dialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -135,5 +136,16 @@ public class ModifyActivity extends FragmentActivity implements DatePickerDialog
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int i, int i2, int i3) {
         DateEdit.setText(new StringBuffer().append(i).append("-").append(i2 + 1).append("-").append(i3).toString());
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

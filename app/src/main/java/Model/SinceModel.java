@@ -4,7 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
 
+import com.dexafree.materialList.model.Card;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import Bean.SinceBean;
 import DAO.SinceDAO;
@@ -23,6 +26,10 @@ public class SinceModel {
 
     public void InsertSince(SinceBean sinceBean, SQLiteDatabase DB) {
         new SinceThread(sinceBean, DB).start();
+    }
+
+    public void DeleteAllCards(SQLiteDatabase DB,List<Card> list){
+        new DeleteAllCardsThread(DB,list).start();
     }
 
     Handler handler =new Handler(){
@@ -47,7 +54,7 @@ public class SinceModel {
         }.start();
     }
     //添加Since的Thread
-    public class SinceThread extends Thread {
+    private class SinceThread extends Thread {
         public SinceBean sinceBean;
         private SQLiteDatabase DB;
 
@@ -60,6 +67,19 @@ public class SinceModel {
         public void run() {
             super.run();
             SinceDAO.insert(DB, sinceBean);
+        }
+    }
+
+    private class DeleteAllCardsThread extends  Thread{
+        private SQLiteDatabase DB;
+        private List<Card> list;
+        public DeleteAllCardsThread(SQLiteDatabase DB,List<Card> list){
+            this.DB =DB;
+            this.list=list;
+        }
+        @Override
+        public void run() {
+            SinceDAO.delete(DB,list);
         }
     }
 

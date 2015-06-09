@@ -13,6 +13,7 @@ import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.Switch;
 import com.gc.materialdesign.widgets.Dialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -152,5 +153,17 @@ public class AddActivity extends FragmentActivity implements DatePickerDialog.On
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

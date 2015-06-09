@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dexafree.materialList.model.Card;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import Bean.SinceBean;
 import Utils.CalendarUtils;
@@ -43,6 +46,12 @@ public class SinceDAO {
 
     public static void delete(SQLiteDatabase DB, SinceBean SB) {
         DB.delete("Since", "content = ?", new String[]{SB.getContent()});
+    }
+
+    public static void delete(SQLiteDatabase DB, List<Card> list) {
+        for(Card card:list){
+            delete(DB,(SinceBean)card.getTag());
+        }
     }
 
     public static void Update(SQLiteDatabase DB, SinceBean SB, String OldContent) {

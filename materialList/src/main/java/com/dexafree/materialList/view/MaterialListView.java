@@ -143,8 +143,8 @@ public class MaterialListView extends RecyclerView {
     public void clear(){
         ((MaterialListAdapter)getAdapter()).clear();
     }
-    public void clearDismiss(){
-        ((MaterialListAdapter)getAdapter()).clearDismiss();
+    public void clearDismiss(MaterialListAdapter.ClearCallback callback){
+        ((MaterialListAdapter)getAdapter()).clearDismiss(callback);
     }
 	@Override
 	public void setAdapter(final Adapter adapter) {

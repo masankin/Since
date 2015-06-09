@@ -88,14 +88,18 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
 		}
 	}
 
-    public void clearDismiss(){
+    public void clearDismiss(ClearCallback callback){
         Iterator<Card> it =mCardList.listIterator();
+        List<Card> list=new ArrayList<Card>();
         while (it.hasNext()){
-            if (it.next().isDismissible()){
+            Card card =it.next();
+            if (card.isDismissible()){
+                list.add(card);
                 it.remove();
             }
         }
         notifyDataSetChanged();
+        callback.onClearDismiss(list);
     }
 
     public void clear(){
@@ -114,4 +118,8 @@ public class MaterialListAdapter extends RecyclerView.Adapter<MaterialListAdapte
 	public int getPosition(Card card) {
 		return mCardList.indexOf(card);
 	}
+
+    public interface ClearCallback{
+        void onClearDismiss(List<Card> list);
+    }
 }
